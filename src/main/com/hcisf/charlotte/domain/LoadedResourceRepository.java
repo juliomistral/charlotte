@@ -8,7 +8,7 @@ public class LoadedResourceRepository {
 
     }
 
-    public boolean wasResourceVisited(URL resourceURL) {
+    public boolean wasResourceVisited(String resourceURL) {
         return false;
     }
 }
