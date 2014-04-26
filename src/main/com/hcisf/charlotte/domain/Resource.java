@@ -1,23 +1,24 @@
 package com.hcisf.charlotte.domain;
 
-import java.net.URL;
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class Resource {
     public ResourceType type;
     public ResourceStatus status;
     public String rawResponse;
-    public URL url;
-    public Collection<Resource> children;
+    public String location;
+    public List<Resource> children;
 
-    public Resource() {
+
+    public Resource(String location) {
+        this.location = location;
         this.status = ResourceStatus.EMPTY;
+        this.children = new LinkedList<Resource>();
     }
 
     public void addChild(Resource resource) {
-        this.children = this.children == null ? new LinkedList<Resource>() : this.children;
         this.children.add(resource);
     }
 
