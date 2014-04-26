@@ -19,12 +19,12 @@ public class ResourceScanner {
         this.crawler = crawler;
     }
 
-    public void scan(String resourceUrl) {
-        if (loadedResourceRepository.wasResourceVisited(resourceUrl)) {
+    public void scan(Resource resource) {
+        if (loadedResourceRepository.wasResourceVisited(resource)) {
             return;
         }
 
-        Resource resource = loader.loadResource(resourceUrl);
+        loader.populateResource(resource);
         loadedResourceRepository.registerVisitedResource(resource);
 
         for (Resource child : resource.children) {

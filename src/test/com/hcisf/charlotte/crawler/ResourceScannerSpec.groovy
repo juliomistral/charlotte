@@ -16,14 +16,11 @@ class ResourceScannerSpec extends Specification {
     Loader loader
     ResourceCrawler crawler;
 
-    URL url
     Resource resource
 
 
     void setup() {
         resource = new Resource()
-        resource.status = ResourceStatus.LOADED
-        resource.children = new LinkedList<Resource>();
 
         repository = Mock(LoadedResourceRepository)
         loader = Mock(Loader)
@@ -33,17 +30,17 @@ class ResourceScannerSpec extends Specification {
         scanner = new ResourceScanner(repository, loader, crawler)
     }
 
-    def "should use the loader to load the resource from the provided resource URL"() {
+    def "should use the loader to populate the provided resource"() {
         when: "the scanner scans a resource"
-            scanner.scan(RESOURCE_URL)
+            scanner.scan(resource)
 
         then: "the loader is used to load the resource via it's URL"
-            1 * loader.loadResource(RESOURCE_URL) >> resource
+            1 * loader.populateResource(resource)
     }
 
     def "should mark the loaded resource as being visited"() {
         when: "the scanner scans a resource"
-            scanner.scan(RESOURCE_URL)
+            scanner.scan(resource)
 
         then: "the resource is registered with the repository"
             1 * repository.registerVisitedResource(resource)
@@ -54,7 +51,7 @@ class ResourceScannerSpec extends Specification {
             repository.wasResourceVisited(RESOURCE_URL) >> true
 
         when: "the scanner scans a resource"
-            scanner.scan(RESOURCE_URL)
+            scanner.scan(resource)
 
         then: "the scanner immediately exists without trying to load the resource"
             0 * loader.loadResource(RESOURCE_URL)
@@ -67,7 +64,7 @@ class ResourceScannerSpec extends Specification {
             resource.addChildren(child1, child2)
 
         when: "the scanner scans a resource"
-            scanner.scan(RESOURCE_URL)
+            scanner.scan(resource)
 
         then: "the children are registered with the resource crawler"
             1 * crawler.registerForScanning(child1)

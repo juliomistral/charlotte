@@ -15,10 +15,10 @@ public class Resource {
     public Resource(String location) {
         this.location = location;
         this.status = ResourceStatus.EMPTY;
+        this.children = new LinkedList<Resource>();
     }
 
     public void addChild(Resource resource) {
-        this.children = this.children == null ? new LinkedList<Resource>() : this.children;
         this.children.add(resource);
     }
 
