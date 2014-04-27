@@ -1,7 +1,6 @@
 package com.hcisf.charlotte.crawler;
 
 import com.hcisf.PowerMockWithSpecTestNameRunner;
-import com.hcisf.charlotte.domain.LoadedResourceRepository;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 
@@ -17,11 +16,9 @@ public class ResourceScannerTest {
     public static final String RESOURCE_URL = "http://some.url";
 
     ResourceScanner scanner;
-
     LoadedResourceRepository repository;
     Loader loader;
     ResourceCrawler crawler;
-
     Resource resource;
 
 
