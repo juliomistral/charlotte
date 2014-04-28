@@ -1,10 +1,7 @@
 package com.hcisf.charlotte.crawler;
 
-import com.hcisf.charlotte.domain.LoadedResourceRepository;
 import com.hcisf.charlotte.domain.Resource;
-import com.hcisf.charlotte.util.Loader;
-
-import java.net.URL;
+import com.hcisf.charlotte.loader.Loader;
 
 public class ResourceScanner {
     LoadedResourceRepository loadedResourceRepository;
@@ -19,13 +16,13 @@ public class ResourceScanner {
         this.crawler = crawler;
     }
 
-    public void scan(URL resourceUrl) {
-        if (loadedResourceRepository.wasResourceVisited(resourceUrl)) {
+    public void scan(Resource resource) {
+        if (loadedResourceRepository.wasResourceVisited(resource)) {
             return;
         }
 
-        Resource resource = loader.loadResource(resourceUrl);
         loadedResourceRepository.registerVisitedResource(resource);
+        loader.populateResource(resource);
 
         for (Resource child : resource.children) {
             crawler.registerForScanning(child);
