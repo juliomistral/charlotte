@@ -20,10 +20,10 @@ import org.jsoup.select.Elements;
 
 import org.powermock.api.mockito.PowerMockito;
 import static org.mockito.Mockito.*;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 
 @RunWith(PowerMockWithSpecTestNameRunner.class)
