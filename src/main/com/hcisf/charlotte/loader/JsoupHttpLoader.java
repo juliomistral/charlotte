@@ -7,6 +7,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,6 +18,7 @@ import java.util.List;
 
 
 public class JsoupHttpLoader implements Loader {
+    private static final Logger log = LoggerFactory.getLogger(JsoupHttpLoader.class);
     int timeout;
 
     public JsoupHttpLoader(int timeout) {
@@ -30,6 +33,7 @@ public class JsoupHttpLoader implements Loader {
     }
 
     public void populateResource(Resource resource) {
+        log.info("Loading resource from it's location:  {}", resource.location);
         try {
             URL contentURL = new URL(resource.location);
             Document doc = Jsoup.parse(contentURL, this.timeout);
@@ -38,8 +42,10 @@ public class JsoupHttpLoader implements Loader {
             resource.status = ResourceStatus.PARSED;
 
         } catch (MalformedURLException mue) {
+            log.error("Resource location was malformed....resource NOT POPULATED", mue);
             resource.status = ResourceStatus.INVALID;
         } catch(IOException ioe) {
+            log.error("Resource location was unavailable....resource NOT POPULATED", ioe);
             resource.status = ResourceStatus.UNAVAILABLE;
         }
     }
