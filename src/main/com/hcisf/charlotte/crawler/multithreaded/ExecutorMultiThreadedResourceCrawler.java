@@ -1,6 +1,9 @@
-package com.hcisf.charlotte.crawler;
+package com.hcisf.charlotte.crawler.multithreaded;
 
 
+import com.hcisf.charlotte.crawler.LoadedResourceRepository;
+import com.hcisf.charlotte.crawler.ResourceCrawler;
+import com.hcisf.charlotte.crawler.ResourceScanner;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 import org.slf4j.Logger;

@@ -1,11 +1,12 @@
-package com.hcisf.charlotte.crawler;
+package com.hcisf.charlotte.crawler.multithreaded;
 
 
 import com.hcisf.charlotte.MockBasedTest;
+import com.hcisf.charlotte.crawler.LoadedResourceRepository;
+import com.hcisf.charlotte.crawler.ResourceScanner;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 import static org.mockito.Mockito.*;
