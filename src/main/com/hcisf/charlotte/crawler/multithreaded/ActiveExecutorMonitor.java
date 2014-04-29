@@ -22,4 +22,8 @@ public class ActiveExecutorMonitor implements Runnable {
 //
 //        progressChecker.start();
     }
+
+    public void registerActiveExecutor(ResourceCrawlerExecutor executor) {
+
+    }
 }

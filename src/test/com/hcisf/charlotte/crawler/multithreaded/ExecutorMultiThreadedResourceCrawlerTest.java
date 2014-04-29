@@ -30,6 +30,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Mock ExecutorService scannerPool;
 
     @Mock ResourceCrawlerExecutor executor;
+    @Mock ActiveExecutorMonitor monitor;
     @Mock ResourceScanner scanner;
 
 
@@ -37,6 +38,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     public void setup() throws Exception{
         PowerMockito.whenNew(ResourceScanner.class).withAnyArguments().thenReturn(scanner);
         PowerMockito.whenNew(ResourceCrawlerExecutor.class).withAnyArguments().thenReturn(executor);
+        PowerMockito.whenNew(ActiveExecutorMonitor.class).withAnyArguments().thenReturn(monitor);
 
         crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader);
     }
@@ -80,5 +82,12 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
         verify(scannerPool, times(2)).execute(executor);
     }
 
+    @Test
+    public void shouldAddTheCreatedExecutorToTheActiveExecutorMonity() {
+        // when a resource is registered to be scanned
+        crawler.registerForScanning(resource);
 
+        // then the crawler registers the created executor to the active executor monitor
+        verify(monitor, times(1)).registerActiveExecutor(executor);
+    }
 }
