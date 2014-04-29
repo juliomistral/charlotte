@@ -45,9 +45,6 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
             @Override
             public void run() {
                 for (ResourceCrawlerExecutor exc : runningExecutors) {
-                    if (exc.isComplete()) {
-
-                    }
                 }
             }
 
