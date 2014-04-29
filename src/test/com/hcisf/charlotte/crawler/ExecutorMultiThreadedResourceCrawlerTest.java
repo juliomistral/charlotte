@@ -6,6 +6,7 @@ import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import static org.mockito.Mockito.*;
 import org.junit.Before;
@@ -25,7 +26,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
 
     @Mock Loader loader;
     @Mock LoadedResourceRepository repo;
-    @Mock Executor scannerPool;
+    @Mock ExecutorService scannerPool;
 
     @Mock ResourceCrawlerExecutor executor;
     @Mock ResourceScanner scanner;
