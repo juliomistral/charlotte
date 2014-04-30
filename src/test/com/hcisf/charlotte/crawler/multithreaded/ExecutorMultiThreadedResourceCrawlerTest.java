@@ -83,11 +83,15 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     }
 
     @Test
-    public void shouldAddTheCreatedExecutorToTheActiveExecutorMonity() {
+    public void shouldAddTheCreatedExecutorToTheActiveExecutorMonity() throws Exception {
         // when a resource is registered to be scanned
         crawler.registerForScanning(resource);
 
+        // and another resource is registered to be scanned
+        crawler.registerForScanning(anotherResource);
+
         // then the crawler registers the created executor to the active executor monitor
-        verify(monitor, times(1)).registerActiveExecutor(executor);
+        PowerMockito.verifyNew(ActiveExecutorMonitor.class, times(1)).withArguments(crawler, 3);
+        verify(monitor, times(2)).registerActiveExecutor(executor);
     }
 }
