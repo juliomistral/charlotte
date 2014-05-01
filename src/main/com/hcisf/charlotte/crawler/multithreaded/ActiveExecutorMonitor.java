@@ -5,6 +5,7 @@ import com.hcisf.charlotte.crawler.ResourceCrawler;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,34 +22,46 @@ public class ActiveExecutorMonitor implements Runnable {
         this.crawler = crawler;
         this.threshold = threshold;
         this.noActiveExecutorMissesCount = new AtomicInteger(0);
-        this.activeExecutors = Collections.synchronizedSet(new HashSet<ResourceCrawlerExecutor>());
+        this.activeExecutors = new HashSet<ResourceCrawlerExecutor>();
         this.isStarted = Boolean.FALSE;
     }
 
     @Override
     public void run() {
         while (true) {
-            for (ResourceCrawlerExecutor exc : activeExecutors) {
-                if (exc.isCompleted()) {
-                    activeExecutors.remove(exc);
+
+            synchronized (activeExecutors) {
+                Iterator<ResourceCrawlerExecutor> iterator = activeExecutors.iterator();
+                while (iterator.hasNext()) {
+                    ResourceCrawlerExecutor exc = iterator.next();
+                    if (exc.isCompleted()) {
+                        iterator.remove();
+                    }
                 }
+
+                if (activeExecutors.size() == 0) {
+                    noActiveExecutorMissesCount.incrementAndGet();
+                } else {
+                    noActiveExecutorMissesCount.set(0);
+                }
+
+                if (noActiveExecutorMissesCount.get() == threshold) {
+                    crawler.shutdown();
+                    return;
+                }
+
+                try {
+                    activeExecutors.wait(1000);
+                } catch (InterruptedException e) {}
             }
 
-            if (activeExecutors.size() == 0) {
-                noActiveExecutorMissesCount.incrementAndGet();
-            } else {
-                noActiveExecutorMissesCount.set(0);
-            }
-
-            if (noActiveExecutorMissesCount.get() == threshold) {
-                crawler.shutdown();
-                return;
-            }
         }
     }
 
     public void registerActiveExecutor(ResourceCrawlerExecutor executor) {
-        activeExecutors.add(executor);
+        synchronized (activeExecutors) {
+            activeExecutors.add(executor);
+        }
         if (!isStarted) {
             startMonitoringThread();
         }
