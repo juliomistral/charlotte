@@ -1,5 +1,6 @@
-package com.hcisf.charlotte.crawler;
+package com.hcisf.charlotte.crawler.multithreaded;
 
+import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.domain.Resource;
 
 import java.util.Collections;

@@ -1,11 +1,12 @@
-package com.hcisf.charlotte.crawler;
+package com.hcisf.charlotte.crawler.multithreaded;
 
 
 import com.hcisf.charlotte.MockBasedTest;
+import com.hcisf.charlotte.crawler.LoadedResourceRepository;
+import com.hcisf.charlotte.crawler.ResourceScanner;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 import static org.mockito.Mockito.*;
@@ -29,6 +30,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Mock ExecutorService scannerPool;
 
     @Mock ResourceCrawlerExecutor executor;
+    @Mock ActiveExecutorMonitor monitor;
     @Mock ResourceScanner scanner;
 
 
@@ -36,6 +38,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     public void setup() throws Exception{
         PowerMockito.whenNew(ResourceScanner.class).withAnyArguments().thenReturn(scanner);
         PowerMockito.whenNew(ResourceCrawlerExecutor.class).withAnyArguments().thenReturn(executor);
+        PowerMockito.whenNew(ActiveExecutorMonitor.class).withAnyArguments().thenReturn(monitor);
 
         crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader);
     }
@@ -79,5 +82,16 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
         verify(scannerPool, times(2)).execute(executor);
     }
 
+    @Test
+    public void shouldAddTheCreatedExecutorToTheActiveExecutorMonity() throws Exception {
+        // when a resource is registered to be scanned
+        crawler.registerForScanning(resource);
 
+        // and another resource is registered to be scanned
+        crawler.registerForScanning(anotherResource);
+
+        // then the crawler registers the created executor to the active executor monitor
+        PowerMockito.verifyNew(ActiveExecutorMonitor.class, times(1)).withArguments(crawler, 3);
+        verify(monitor, times(2)).registerActiveExecutor(executor);
+    }
 }

@@ -1,9 +1,10 @@
-package com.hcisf.charlotte.crawler;
+package com.hcisf.charlotte.crawler.multithreaded;
 
 
 
 import com.hcisf.charlotte.MockBasedTest;
 
+import com.hcisf.charlotte.crawler.multithreaded.ThreadSafeLoadedResourceRepository;
 import com.hcisf.charlotte.domain.Resource;
 import org.junit.Before;
 import org.junit.Test;
