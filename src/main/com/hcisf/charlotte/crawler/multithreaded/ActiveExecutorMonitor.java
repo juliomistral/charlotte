@@ -2,14 +2,17 @@ package com.hcisf.charlotte.crawler.multithreaded;
 
 
 import com.hcisf.charlotte.crawler.ResourceCrawler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
 public class ActiveExecutorMonitor implements Runnable {
+    private final static Logger log = LoggerFactory.getLogger(ActiveExecutorMonitor.class);
     private ResourceCrawler crawler;
     private Set<ResourceCrawlerExecutor> activeExecutors;
     private Thread monitoringThread;
@@ -26,36 +29,12 @@ public class ActiveExecutorMonitor implements Runnable {
         this.isStarted = Boolean.FALSE;
     }
 
-    @Override
-    public void run() {
-        while (true) {
+    public boolean isExecutorActive(ResourceCrawlerExecutor executor) {
+        return activeExecutors.contains(executor);
+    }
 
-            synchronized (activeExecutors) {
-                Iterator<ResourceCrawlerExecutor> iterator = activeExecutors.iterator();
-                while (iterator.hasNext()) {
-                    ResourceCrawlerExecutor exc = iterator.next();
-                    if (exc.isCompleted()) {
-                        iterator.remove();
-                    }
-                }
-
-                if (activeExecutors.size() == 0) {
-                    noActiveExecutorMissesCount.incrementAndGet();
-                } else {
-                    noActiveExecutorMissesCount.set(0);
-                }
-
-                if (noActiveExecutorMissesCount.get() == threshold) {
-                    crawler.shutdown();
-                    return;
-                }
-
-                try {
-                    activeExecutors.wait(1000);
-                } catch (InterruptedException e) {}
-            }
-
-        }
+    public Boolean isStarted() {
+        return isStarted;
     }
 
     public void registerActiveExecutor(ResourceCrawlerExecutor executor) {
@@ -77,11 +56,45 @@ public class ActiveExecutorMonitor implements Runnable {
         }
     }
 
-    public boolean isExecutorActive(ResourceCrawlerExecutor executor) {
-        return activeExecutors.contains(executor);
+    @Override
+    public void run() {
+        while (true) {
+            synchronized (activeExecutors) {
+                pruneCompletedExecutors();
+                updateMissCount();
+
+                if (isMissCountAtThreshold()) {
+                    crawler.shutdown();
+                    return;
+                }
+
+                try {
+                    activeExecutors.wait(1000);
+                } catch (InterruptedException e) {}
+            }
+
+        }
     }
 
-    public Boolean isStarted() {
-        return isStarted;
+    private void pruneCompletedExecutors() {
+        Iterator<ResourceCrawlerExecutor> iterator = activeExecutors.iterator();
+        while (iterator.hasNext()) {
+            ResourceCrawlerExecutor exc = iterator.next();
+            if (exc.isCompleted()) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private void updateMissCount() {
+        if (activeExecutors.size() == 0) {
+            noActiveExecutorMissesCount.incrementAndGet();
+        } else {
+            noActiveExecutorMissesCount.set(0);
+        }
+    }
+
+    private boolean isMissCountAtThreshold() {
+        return noActiveExecutorMissesCount.get() == threshold;
     }
 }
