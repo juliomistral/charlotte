@@ -31,6 +31,6 @@ public class CrawlResourceCommand {
         BasicConfigurator.configure();
 
         CrawlResourceCommand cmd = new CrawlResourceCommand();
-        cmd.execute("http://www.simplesite.com");
+        cmd.execute("http://www.simpleadsfasdasdsite.com");
     }
 }

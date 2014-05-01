@@ -26,7 +26,7 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
         this.scannerPool = scannerPool;
 
         this.scanner = new ResourceScanner(repo, loader, this);
-        this.monitor = new ActiveExecutorMonitor(this, 3);
+        this.monitor = new ActiveExecutorMonitor(this, 3, 1000);
     }
 
     @Override
@@ -38,6 +38,6 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
 
     @Override
     public void shutdown() {
-
+        scannerPool.shutdownNow();
     }
 }

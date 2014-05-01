@@ -91,7 +91,16 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
         crawler.registerForScanning(anotherResource);
 
         // then the crawler registers the created executor to the active executor monitor
-        PowerMockito.verifyNew(ActiveExecutorMonitor.class, times(1)).withArguments(crawler, 3);
+        PowerMockito.verifyNew(ActiveExecutorMonitor.class, times(1)).withArguments(crawler, 3, 1000);
         verify(monitor, times(2)).registerActiveExecutor(executor);
+    }
+
+    @Test
+    public void shouldShutdownTheExecutorPoolDuringAShutdown() {
+        // when the executor is told to shut down
+        crawler.shutdown();
+
+        // then the crawler notifies the executor pool to shutdown immediately
+        verify(scannerPool, times(1)).shutdownNow();
     }
 }

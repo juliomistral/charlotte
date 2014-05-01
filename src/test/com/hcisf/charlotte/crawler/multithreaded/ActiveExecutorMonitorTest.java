@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @PrepareForTest({ActiveExecutorMonitor.class})
 public class ActiveExecutorMonitorTest extends MockBasedTest {
     private static final int NUMBER_OF_TRIES = 3;
+    private static final int POLLING_INTERVAL_MILLIS = 100;
     ActiveExecutorMonitor monitor;
 
     @Mock ResourceCrawler crawler;
@@ -30,7 +31,7 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
     @Before
     public void setup() throws Exception {
         PowerMockito.whenNew(Thread.class).withAnyArguments().thenReturn(thread);
-        monitor = new ActiveExecutorMonitor(crawler, NUMBER_OF_TRIES);
+        monitor = new ActiveExecutorMonitor(crawler, NUMBER_OF_TRIES, POLLING_INTERVAL_MILLIS);
     }
 
     @Test

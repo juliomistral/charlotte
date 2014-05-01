@@ -18,12 +18,15 @@ public class ActiveExecutorMonitor implements Runnable {
     private Thread monitoringThread;
     private Boolean isStarted;
     private int threshold;
+    private int pollingInterval;
     private AtomicInteger noActiveExecutorMissesCount;
 
 
-    public ActiveExecutorMonitor(ResourceCrawler crawler, int threshold) {
+    public ActiveExecutorMonitor(ResourceCrawler crawler, int threshold, int pollingInterval) {
         this.crawler = crawler;
         this.threshold = threshold;
+        this.pollingInterval = pollingInterval;
+
         this.noActiveExecutorMissesCount = new AtomicInteger(0);
         this.activeExecutors = new HashSet<ResourceCrawlerExecutor>();
         this.isStarted = Boolean.FALSE;
@@ -69,7 +72,7 @@ public class ActiveExecutorMonitor implements Runnable {
                 }
 
                 try {
-                    activeExecutors.wait(1000);
+                    activeExecutors.wait(pollingInterval);
                 } catch (InterruptedException e) {}
             }
 
@@ -84,6 +87,7 @@ public class ActiveExecutorMonitor implements Runnable {
                 iterator.remove();
             }
         }
+        log.info("# of active executors:  {}", activeExecutors.size());
     }
 
     private void updateMissCount() {
@@ -92,6 +96,7 @@ public class ActiveExecutorMonitor implements Runnable {
         } else {
             noActiveExecutorMissesCount.set(0);
         }
+        log.info("Miss count: {}", noActiveExecutorMissesCount.get());
     }
 
     private boolean isMissCountAtThreshold() {
