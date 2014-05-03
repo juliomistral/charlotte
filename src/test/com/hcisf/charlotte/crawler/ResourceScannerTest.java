@@ -75,7 +75,7 @@ public class ResourceScannerTest {
         scanner.scan(resource);
 
         // then: "the children are registered with the resource crawler"
-        verify(crawler, times(1)).registerForScanning(child1);
-        verify(crawler, times(1)).registerForScanning(child2);
+        verify(crawler, times(1)).crawlResource(child1);
+        verify(crawler, times(1)).crawlResource(child2);
     }
 }

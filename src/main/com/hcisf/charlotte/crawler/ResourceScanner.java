@@ -25,7 +25,7 @@ public class ResourceScanner {
         loader.populateResource(resource);
 
         for (Resource child : resource.children) {
-            crawler.registerForScanning(child);
+            crawler.crawlResource(child);
         }
     }
 }

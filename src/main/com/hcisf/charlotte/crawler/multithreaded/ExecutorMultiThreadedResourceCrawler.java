@@ -30,7 +30,7 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
     }
 
     @Override
-    public void registerForScanning(Resource resource) {
+    public void crawlResource(Resource resource) {
         ResourceCrawlerExecutor executor = new ResourceCrawlerExecutor(resource, scanner);
         monitor.registerActiveExecutor(executor);
         scannerPool.execute(executor);

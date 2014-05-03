@@ -23,7 +23,7 @@ public class CrawlResourceCommand {
         ResourceCrawler crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader);
 
         Resource toBeScanned = new Resource(location);
-        crawler.registerForScanning(toBeScanned);
+        crawler.crawlResource(toBeScanned);
     }
 
     public static void main(String[] args) {

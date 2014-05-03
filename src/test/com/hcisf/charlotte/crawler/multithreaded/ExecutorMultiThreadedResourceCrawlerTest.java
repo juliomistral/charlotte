@@ -46,10 +46,10 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Test
     public void shouldCreateAResourceScannerForScanningAllRegisteredResources() throws Exception {
         // when a resource is registered to be scanned
-        crawler.registerForScanning(resource);
+        crawler.crawlResource(resource);
 
         // and another resource is registered to be scanned
-        crawler.registerForScanning(anotherResource);
+        crawler.crawlResource(anotherResource);
 
         // then only one resource scanner is instantiated
         PowerMockito.verifyNew(
@@ -60,10 +60,10 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Test
     public void shouldCreateAResourceCrawlerExecutorForEachRegisteredResource() throws Exception {
         // when a resource is registered to be scanned
-        crawler.registerForScanning(resource);
+        crawler.crawlResource(resource);
 
         // and another resource is registered to be scanned
-        crawler.registerForScanning(anotherResource);
+        crawler.crawlResource(anotherResource);
 
         // then a resource scanner is used to scan all registered resources
         PowerMockito.verifyNew(ResourceCrawlerExecutor.class).withArguments(resource, scanner);
@@ -73,10 +73,10 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Test
     public void shouldUseTheScannerPoolToExecuteTheCreatedResourceCrawlerExecutor() {
         // when a resource is registered to be scanned
-        crawler.registerForScanning(resource);
+        crawler.crawlResource(resource);
 
         // and another resource is registered to be scanned
-        crawler.registerForScanning(anotherResource);
+        crawler.crawlResource(anotherResource);
 
         // then the pool executes each created resource scanner exeucutor
         verify(scannerPool, times(2)).execute(executor);
@@ -85,10 +85,10 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Test
     public void shouldAddTheCreatedExecutorToTheActiveExecutorMonity() throws Exception {
         // when a resource is registered to be scanned
-        crawler.registerForScanning(resource);
+        crawler.crawlResource(resource);
 
         // and another resource is registered to be scanned
-        crawler.registerForScanning(anotherResource);
+        crawler.crawlResource(anotherResource);
 
         // then the crawler registers the created executor to the active executor monitor
         PowerMockito.verifyNew(ActiveExecutorMonitor.class, times(1)).withArguments(crawler, 3, 1000);
