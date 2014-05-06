@@ -4,6 +4,7 @@ package com.hcisf.charlotte.crawler.multithreaded;
 import com.hcisf.charlotte.MockBasedTest;
 import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.crawler.ResourceScanner;
+import com.hcisf.charlotte.report.Report;
 import com.hcisf.charlotte.report.Reporter;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
@@ -30,6 +31,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     @Mock LoadedResourceRepository repo;
     @Mock Reporter reporter;
 
+    @Mock Report report;
     @Mock ExecutorService scannerPool;
     @Mock ResourceCrawlerExecutor executor;
     @Mock ActiveExecutorMonitor monitor;
@@ -41,6 +43,8 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
         PowerMockito.whenNew(ResourceScanner.class).withAnyArguments().thenReturn(scanner);
         PowerMockito.whenNew(ResourceCrawlerExecutor.class).withAnyArguments().thenReturn(executor);
         PowerMockito.whenNew(ActiveExecutorMonitor.class).withAnyArguments().thenReturn(monitor);
+
+        when(reporter.compileReport()).thenReturn(report);
 
         crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader, reporter);
     }
@@ -104,5 +108,14 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
 
         // then the crawler notifies the executor pool to shutdown immediately
         verify(scannerPool, times(1)).shutdownNow();
+    }
+
+    @Test
+    public void shouldReturnTheReportCompiledByTheReporterAfterAShutdown() {
+        // when the executor is told to shut down
+        Report output = crawler.shutdown();
+
+        // then the crawler returns the report compiled by the reporter
+        assert output == report;
     }
 }

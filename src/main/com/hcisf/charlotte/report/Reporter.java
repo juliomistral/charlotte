@@ -1,7 +1,14 @@
 package com.hcisf.charlotte.report;
 
-/**
- * Created by juliomistral on 5/6/14.
- */
+import com.hcisf.charlotte.domain.Resource;
+
+
 public class Reporter {
+    public void gatherStatistics(Resource resource) {
+
+    }
+
+    public Report compileReport() {
+        return null;
+    }
 }

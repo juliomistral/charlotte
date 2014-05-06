@@ -32,5 +32,7 @@ public class ResourceScanner {
         for (Resource child : resource.children) {
             crawler.crawlResource(child);
         }
+
+        reporter.gatherStatistics(resource);
     }
 }

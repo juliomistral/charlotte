@@ -75,4 +75,13 @@ public class ResourceScannerTest extends MockBasedTest {
         verify(crawler, times(1)).crawlResource(child1);
         verify(crawler, times(1)).crawlResource(child2);
     }
+
+    @Test
+    public void shouldUseTheReporterToGatherStatsOnTheScannedResource() {
+        // when: "the scanner scans a resource"
+        scanner.scan(resource);
+
+        // then: "the reporter gathers statistics on the resource after it's loaded
+        verify(reporter, times(1)).gatherStatistics(resource);
+    }
 }
