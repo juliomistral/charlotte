@@ -4,6 +4,7 @@ package com.hcisf.charlotte.crawler.multithreaded;
 import com.hcisf.charlotte.MockBasedTest;
 import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.crawler.ResourceScanner;
+import com.hcisf.charlotte.report.Reporter;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 
@@ -27,8 +28,9 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
 
     @Mock Loader loader;
     @Mock LoadedResourceRepository repo;
-    @Mock ExecutorService scannerPool;
+    @Mock Reporter reporter;
 
+    @Mock ExecutorService scannerPool;
     @Mock ResourceCrawlerExecutor executor;
     @Mock ActiveExecutorMonitor monitor;
     @Mock ResourceScanner scanner;
@@ -40,7 +42,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
         PowerMockito.whenNew(ResourceCrawlerExecutor.class).withAnyArguments().thenReturn(executor);
         PowerMockito.whenNew(ActiveExecutorMonitor.class).withAnyArguments().thenReturn(monitor);
 
-        crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader);
+        crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader, reporter);
     }
 
     @Test
@@ -54,7 +56,7 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
         // then only one resource scanner is instantiated
         PowerMockito.verifyNew(
             ResourceScanner.class, times(1)
-        ).withArguments(repo, loader, crawler);
+        ).withArguments(repo, loader, crawler, reporter);
     }
 
     @Test
