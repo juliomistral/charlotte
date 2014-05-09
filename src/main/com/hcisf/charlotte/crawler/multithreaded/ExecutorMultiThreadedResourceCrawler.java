@@ -4,7 +4,9 @@ package com.hcisf.charlotte.crawler.multithreaded;
 import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.crawler.ResourceCrawler;
 import com.hcisf.charlotte.crawler.ResourceScanner;
+
 import com.hcisf.charlotte.domain.Resource;
+
 import com.hcisf.charlotte.loader.Loader;
 import com.hcisf.charlotte.report.Report;
 import com.hcisf.charlotte.report.Reporter;
@@ -24,7 +26,10 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
     private ActiveExecutorMonitor monitor;
 
 
-    public ExecutorMultiThreadedResourceCrawler(ExecutorService scannerPool, LoadedResourceRepository repo, Loader loader, Reporter reporter) {
+    public ExecutorMultiThreadedResourceCrawler(ExecutorService scannerPool,
+                                                LoadedResourceRepository repo,
+                                                Loader loader,
+                                                Reporter reporter) {
         this.repo = repo;
         this.scannerPool = scannerPool;
         this.reporter = reporter;

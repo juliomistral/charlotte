@@ -9,10 +9,12 @@ import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.JsoupHttpLoader;
 import com.hcisf.charlotte.loader.Loader;
 import com.hcisf.charlotte.report.Reporter;
+import com.hcisf.charlotte.report.ResourceStatsGather;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,7 +28,7 @@ public class CrawlResourceCommand {
         ExecutorService scannerPool = Executors.newFixedThreadPool(5);
         LoadedResourceRepository repo = new ThreadSafeLoadedResourceRepository();
         Loader loader = new JsoupHttpLoader(5000);
-        Reporter reporter = new Reporter();
+        Reporter reporter = new Reporter(new ArrayList<ResourceStatsGather>(0));
 
         ResourceCrawler crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader, reporter);
 

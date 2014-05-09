@@ -25,10 +25,9 @@ public class ResourceScanner {
         if (loadedResourceRepository.wasResourceVisited(resource)) {
             return;
         }
-
         loadedResourceRepository.registerVisitedResource(resource);
-        loader.populateResource(resource);
 
+        loader.populateResource(resource);
         for (Resource child : resource.children) {
             crawler.crawlResource(child);
         }
