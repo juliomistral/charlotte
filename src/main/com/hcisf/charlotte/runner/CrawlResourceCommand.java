@@ -1,6 +1,7 @@
 package com.hcisf.charlotte.runner;
 
 
+import com.hcisf.charlotte.config.CrawlerBuilder;
 import com.hcisf.charlotte.crawler.multithreaded.ExecutorMultiThreadedResourceCrawler;
 import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.crawler.ResourceCrawler;
@@ -25,12 +26,11 @@ public class CrawlResourceCommand {
         Thread currentThread = Thread.currentThread();
         currentThread.setName("main");
 
-        ExecutorService scannerPool = Executors.newFixedThreadPool(5);
-        LoadedResourceRepository repo = new ThreadSafeLoadedResourceRepository();
-        Loader loader = new JsoupHttpLoader(5000);
-        Reporter reporter = new Reporter(new ArrayList<ResourceStatsGather>(0));
-
-        ResourceCrawler crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader, reporter);
+        ResourceCrawler crawler =
+            CrawlerBuilder
+                .aMultithreadedCrawler()
+                .withBrokenLinksReport()
+                .build();
 
         Resource toBeScanned = new Resource(location);
         crawler.crawlResource(toBeScanned);
