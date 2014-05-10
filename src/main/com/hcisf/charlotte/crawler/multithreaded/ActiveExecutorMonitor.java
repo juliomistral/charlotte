@@ -12,7 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ActiveExecutorMonitor implements Runnable {
+    public final static String MONITOR_THREAD_NAME = "ActiveExecutorMonitor";
     private final static Logger log = LoggerFactory.getLogger(ActiveExecutorMonitor.class);
+
     private ResourceCrawler crawler;
     private Set<ResourceCrawlerExecutor> activeExecutors;
     private Thread monitoringThread;
@@ -52,7 +54,7 @@ public class ActiveExecutorMonitor implements Runnable {
     private void startMonitoringThread() {
         synchronized (isStarted) {
             if (!isStarted) {
-                monitoringThread = new Thread(this);
+                monitoringThread = new Thread(this, MONITOR_THREAD_NAME);
                 monitoringThread.start();
                 isStarted = Boolean.TRUE;
             }
