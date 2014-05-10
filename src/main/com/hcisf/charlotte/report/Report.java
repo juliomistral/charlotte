@@ -1,5 +1,9 @@
 package com.hcisf.charlotte.report;
 
 
-public class Report {
+import java.util.Hashtable;
+
+
+public class Report extends Hashtable<String, Object> {
+
 }
