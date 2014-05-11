@@ -7,7 +7,5 @@ import com.hcisf.charlotte.report.Report
 interface ResourceCrawler {
     public void crawlResource(Resource resource);
 
-    public Report shutdown();
-
-
+    public Report getReport();
 }

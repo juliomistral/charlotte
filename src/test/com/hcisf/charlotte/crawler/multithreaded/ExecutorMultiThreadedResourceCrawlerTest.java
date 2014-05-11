@@ -24,14 +24,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
     ExecutorMultiThreadedResourceCrawler crawler;
 
-    @Mock Resource resource;
-    @Mock Resource anotherResource;
+    Report report;
+    Resource resource;
 
+    @Mock Resource anotherResource;
     @Mock Loader loader;
     @Mock LoadedResourceRepository repo;
-    @Mock Reporter reporter;
 
-    @Mock Report report;
+    @Mock Reporter reporter;
     @Mock ExecutorService scannerPool;
     @Mock ResourceCrawlerExecutor executor;
     @Mock ActiveExecutorMonitor monitor;
@@ -40,6 +40,9 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
 
     @Before
     public void setup() throws Exception{
+        report = new Report();
+        resource = new Resource("some url");
+
         PowerMockito.whenNew(ResourceScanner.class).withAnyArguments().thenReturn(scanner);
         PowerMockito.whenNew(ResourceCrawlerExecutor.class).withAnyArguments().thenReturn(executor);
         PowerMockito.whenNew(ActiveExecutorMonitor.class).withAnyArguments().thenReturn(monitor);
@@ -108,14 +111,5 @@ public class ExecutorMultiThreadedResourceCrawlerTest extends MockBasedTest {
 
         // then the crawler notifies the executor pool to shutdown immediately
         verify(scannerPool, times(1)).shutdownNow();
-    }
-
-    @Test
-    public void shouldReturnTheReportCompiledByTheReporterAfterAShutdown() {
-        // when the executor is told to shut down
-        Report output = crawler.shutdown();
-
-        // then the crawler returns the report compiled by the reporter
-        assert output == report;
     }
 }

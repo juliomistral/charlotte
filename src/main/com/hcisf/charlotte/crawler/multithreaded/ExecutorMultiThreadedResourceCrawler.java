@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
     private static final Logger log = LoggerFactory.getLogger(ExecutorMultiThreadedResourceCrawler.class);
 
+    private Boolean isShutdown;
     private ExecutorService scannerPool;
     private ResourceScanner scanner;
     private LoadedResourceRepository repo;
@@ -30,6 +31,7 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
                                                 LoadedResourceRepository repo,
                                                 Loader loader,
                                                 Reporter reporter) {
+        this.isShutdown = true;
         this.repo = repo;
         this.scannerPool = scannerPool;
         this.reporter = reporter;
@@ -40,14 +42,32 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
 
     @Override
     public void crawlResource(Resource resource) {
+        isShutdown = false;
         ResourceCrawlerExecutor executor = new ResourceCrawlerExecutor(resource, scanner);
         monitor.registerActiveExecutor(executor);
         scannerPool.execute(executor);
     }
 
     @Override
-    public Report shutdown() {
-        scannerPool.shutdownNow();
+    public Report getReport() {
+        synchronized (isShutdown) {
+            while (!isShutdown) {
+                try {
+                    isShutdown.wait();
+                } catch (InterruptedException e) {}
+            }
+        }
+
         return reporter.compileReport();
+    }
+
+    public void shutdown() {
+        log.info("Shutting down crawler...");
+        scannerPool.shutdownNow();
+
+        synchronized (isShutdown) {
+            isShutdown.notifyAll();
+            this.isShutdown = true;
+        }
     }
 }

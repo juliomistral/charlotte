@@ -27,6 +27,7 @@ public class BrokenLinkStatsGatherer implements ResourceStatsGather {
 
     private boolean isResourceABrokenLink(Resource resource) {
         return resource.status == ResourceStatus.INVALID
-                || resource.status == ResourceStatus.NOT_FOUND;
+                || resource.status == ResourceStatus.NOT_FOUND
+                || resource.status == ResourceStatus.UNAVAILABLE;
     }
 }

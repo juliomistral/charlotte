@@ -82,6 +82,20 @@ public class BrokenLinkStatsGathererTest extends MockBasedTest {
         ListAssert.assertContains(brokenLinksValue, "not found URL");
     }
 
+    @Test
+    public void shouldAddTheURLOfAnUnavailableResourceToTheBrokenLinksList() {
+        // given an invalid resource
+        resource.location = "not found URL";
+        resource.status = ResourceStatus.UNAVAILABLE;
+
+        // when the gatherer compiles stats for a resource and an empty report
+        gatherer.collectStatsForReport(resource, report);
+
+        // then the broken links list in the report should still contain the previous broken link
+        List<String> brokenLinksValue = assertBrokenLinksListInReport();
+        ListAssert.assertContains(brokenLinksValue, "not found URL");
+    }
+
     private List<String> assertBrokenLinksListInReport() {
         Object brokenLinksValue = report.get(BrokenLinkStatsGatherer.BROKEN_LINKS);
         Assert.assertNotNull(brokenLinksValue);

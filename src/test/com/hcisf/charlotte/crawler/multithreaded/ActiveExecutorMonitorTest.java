@@ -22,7 +22,7 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
     private static final int POLLING_INTERVAL_MILLIS = 100;
     ActiveExecutorMonitor monitor;
 
-    @Mock ResourceCrawler crawler;
+    @Mock ExecutorMultiThreadedResourceCrawler crawler;
     @Mock ResourceCrawlerExecutor executor;
     @Mock ResourceCrawlerExecutor anotherExecutor;
     @Mock Thread thread;
@@ -54,7 +54,7 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
         monitor.registerActiveExecutor(executor);
 
         // then a thread is created using the monitor as the runnable tasks
-        PowerMockito.verifyNew(Thread.class, times(1)).withArguments(monitor);
+        PowerMockito.verifyNew(Thread.class, times(1)).withArguments(monitor, ActiveExecutorMonitor.MONITOR_THREAD_NAME);
 
         // and the thread is started
         verify(thread, times(1)).start();

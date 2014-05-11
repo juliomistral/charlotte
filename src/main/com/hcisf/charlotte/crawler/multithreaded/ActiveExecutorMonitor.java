@@ -15,7 +15,7 @@ public class ActiveExecutorMonitor implements Runnable {
     public final static String MONITOR_THREAD_NAME = "ActiveExecutorMonitor";
     private final static Logger log = LoggerFactory.getLogger(ActiveExecutorMonitor.class);
 
-    private ResourceCrawler crawler;
+    private ExecutorMultiThreadedResourceCrawler crawler;
     private Set<ResourceCrawlerExecutor> activeExecutors;
     private Thread monitoringThread;
     private Boolean isStarted;
@@ -24,7 +24,7 @@ public class ActiveExecutorMonitor implements Runnable {
     private AtomicInteger noActiveExecutorMissesCount;
 
 
-    public ActiveExecutorMonitor(ResourceCrawler crawler, int threshold, int pollingInterval) {
+    public ActiveExecutorMonitor(ExecutorMultiThreadedResourceCrawler crawler, int threshold, int pollingInterval) {
         this.crawler = crawler;
         this.threshold = threshold;
         this.pollingInterval = pollingInterval;

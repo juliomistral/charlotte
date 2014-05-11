@@ -9,6 +9,7 @@ import com.hcisf.charlotte.crawler.multithreaded.ThreadSafeLoadedResourceReposit
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.JsoupHttpLoader;
 import com.hcisf.charlotte.loader.Loader;
+import com.hcisf.charlotte.report.Report;
 import com.hcisf.charlotte.report.Reporter;
 import com.hcisf.charlotte.report.ResourceStatsGather;
 import org.apache.log4j.BasicConfigurator;
@@ -22,7 +23,7 @@ import java.util.concurrent.Executors;
 public class CrawlResourceCommand {
     private final static Logger log = LoggerFactory.getLogger(CrawlResourceCommand.class);
 
-    private void execute(String location) {
+    private Report execute(String location) {
         Thread currentThread = Thread.currentThread();
         currentThread.setName("main");
 
@@ -34,6 +35,7 @@ public class CrawlResourceCommand {
 
         Resource toBeScanned = new Resource(location);
         crawler.crawlResource(toBeScanned);
+        return crawler.getReport();
     }
 
     public static void main(String[] args) {
@@ -41,6 +43,7 @@ public class CrawlResourceCommand {
         BasicConfigurator.configure();
 
         CrawlResourceCommand cmd = new CrawlResourceCommand();
-        cmd.execute("http://www.simpleadsfasdasdsite.com");
+        Report report = cmd.execute("http://www.simpleadsfasdasdsite.com");
+        System.out.println(report);
     }
 }
