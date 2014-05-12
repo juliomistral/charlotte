@@ -38,9 +38,6 @@ public class ExecutorMultiThreadedResourceCrawler implements MultiThreadedResour
 
         this.scanner = new ResourceScanner(repo, loader, this, reporter);
         this.monitor = new ActiveExecutorMonitor(this, 3, 1000);
-
-        VMShutdownHook hook = new VMShutdownHook(this);
-        Runtime.getRuntime().addShutdownHook(new Thread(hook));
     }
 
     @Override
@@ -92,21 +89,5 @@ public class ExecutorMultiThreadedResourceCrawler implements MultiThreadedResour
         }
     }
 
-    class VMShutdownHook implements Runnable {
-        ExecutorMultiThreadedResourceCrawler crawler;
 
-        VMShutdownHook(ExecutorMultiThreadedResourceCrawler crawler) {
-            log.info("VM shutdown hook created for crawler:  {}", crawler);
-            this.crawler = crawler;
-        }
-
-        @Override
-        public void run() {
-            if (!crawler.isCompelte()) {
-                log.info("Recieved FORCED shutdown, closing crawler and publishing report...");
-                crawler.forcedShutdown();
-                log.info("Crawling INCOMPLETE: " + crawler.getReport());
-            }
-        }
-    }
 }
