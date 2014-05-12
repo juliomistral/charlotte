@@ -3,6 +3,7 @@ package com.hcisf.charlotte.loader;
 
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.domain.ResourceStatus;
+import com.hcisf.charlotte.domain.ResourceType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,6 +39,7 @@ public class JsoupHttpLoader implements Loader {
             URL contentURL = new URL(resource.location);
             Document doc = Jsoup.parse(contentURL, this.timeout);
 
+            resource.type = ResourceType.HTML;  // For now, the only type we support
             resource.children = loadChildLinksIntoResources(doc);
             resource.status = ResourceStatus.PARSED;
 
