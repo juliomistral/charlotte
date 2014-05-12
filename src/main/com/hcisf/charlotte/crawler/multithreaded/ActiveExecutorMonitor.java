@@ -84,7 +84,7 @@ public class ActiveExecutorMonitor implements Runnable, ResourceCrawlerExecutorL
     @Override
     public void handleExecutorCompleted(ResourceCrawlerExecutor executor) {
         synchronized (activeExecutors) {
-            log.debug("...REMOVING completed executor for resource:  {}", executor.getResource().location);
+            log.debug("...REMOVING completed executor for resource:  {}", executor.getResource());
             this.activeExecutors.remove(executor);
         }
     }

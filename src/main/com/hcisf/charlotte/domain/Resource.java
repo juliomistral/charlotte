@@ -44,4 +44,13 @@ public class Resource {
 
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Resource{" +
+                "type=" + type +
+                ", status=" + status +
+                ", location='" + location + '\'' +
+                '}';
+    }
 }
