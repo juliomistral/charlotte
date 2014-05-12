@@ -1,12 +1,10 @@
 package com.hcisf.charlotte.crawler.multithreaded;
 
 
-import com.hcisf.charlotte.crawler.ResourceCrawler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,7 +13,7 @@ public class ActiveExecutorMonitor implements Runnable, ResourceCrawlerExecutorL
     public final static String MONITOR_THREAD_NAME = "ActiveExecutorMonitor";
     private final static Logger log = LoggerFactory.getLogger(ActiveExecutorMonitor.class);
 
-    private ExecutorMultiThreadedResourceCrawler crawler;
+    private MultiThreadedResourceCrawler crawler;
     private Set<ResourceCrawlerExecutor> activeExecutors;
     private Thread monitoringThread;
     private Boolean isStarted;
@@ -24,7 +22,7 @@ public class ActiveExecutorMonitor implements Runnable, ResourceCrawlerExecutorL
     private AtomicInteger noActiveExecutorMissesCount;
 
 
-    public ActiveExecutorMonitor(ExecutorMultiThreadedResourceCrawler crawler, int threshold, int pollingInterval) {
+    public ActiveExecutorMonitor(MultiThreadedResourceCrawler crawler, int threshold, int pollingInterval) {
         this.crawler = crawler;
         this.threshold = threshold;
         this.pollingInterval = pollingInterval;

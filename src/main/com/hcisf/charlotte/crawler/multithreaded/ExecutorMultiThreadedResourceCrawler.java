@@ -16,13 +16,13 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutorService;
 
 
-public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
+public class ExecutorMultiThreadedResourceCrawler implements MultiThreadedResourceCrawler {
     private static final Logger log = LoggerFactory.getLogger(ExecutorMultiThreadedResourceCrawler.class);
 
     private Boolean isShutdown;
+    private Boolean isComplete;
     private ExecutorService scannerPool;
     private ResourceScanner scanner;
-    private LoadedResourceRepository repo;
     private Reporter reporter;
     private ActiveExecutorMonitor monitor;
 
@@ -32,12 +32,15 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
                                                 Loader loader,
                                                 Reporter reporter) {
         this.isShutdown = true;
-        this.repo = repo;
+        this.isComplete = false;
         this.scannerPool = scannerPool;
         this.reporter = reporter;
 
         this.scanner = new ResourceScanner(repo, loader, this, reporter);
         this.monitor = new ActiveExecutorMonitor(this, 3, 1000);
+
+        VMShutdownHook hook = new VMShutdownHook(this);
+        Runtime.getRuntime().addShutdownHook(new Thread(hook));
     }
 
     @Override
@@ -61,13 +64,49 @@ public class ExecutorMultiThreadedResourceCrawler implements ResourceCrawler {
         return reporter.compileReport();
     }
 
+    @Override
+    public boolean isCompelte() {
+        return isComplete;
+    }
+
+    @Override
     public void shutdown() {
+        shutdown(false);
+    }
+
+    @Override
+    public void forcedShutdown() {
+        shutdown(true);
+    }
+
+    private void shutdown(boolean isForcedShutdown) {
         log.info("Shutting down crawler...");
         scannerPool.shutdownNow();
 
         synchronized (isShutdown) {
-            isShutdown.notifyAll();
-            this.isShutdown = true;
+            if (!isShutdown) {
+                isShutdown.notifyAll();
+                this.isShutdown = true;
+                this.isComplete = !isForcedShutdown;
+            }
+        }
+    }
+
+    class VMShutdownHook implements Runnable {
+        ExecutorMultiThreadedResourceCrawler crawler;
+
+        VMShutdownHook(ExecutorMultiThreadedResourceCrawler crawler) {
+            log.info("VM shutdown hook created for crawler:  {}", crawler);
+            this.crawler = crawler;
+        }
+
+        @Override
+        public void run() {
+            if (!crawler.isCompelte()) {
+                log.info("Recieved FORCED shutdown, closing crawler and publishing report...");
+                crawler.forcedShutdown();
+                log.info("Crawling INCOMPLETE: " + crawler.getReport());
+            }
         }
     }
 }

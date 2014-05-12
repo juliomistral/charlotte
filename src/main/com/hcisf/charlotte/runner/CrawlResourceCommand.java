@@ -5,6 +5,7 @@ import com.hcisf.charlotte.config.CrawlerBuilder;
 import com.hcisf.charlotte.crawler.multithreaded.ExecutorMultiThreadedResourceCrawler;
 import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.crawler.ResourceCrawler;
+import com.hcisf.charlotte.crawler.multithreaded.MultiThreadedResourceCrawler;
 import com.hcisf.charlotte.crawler.multithreaded.ThreadSafeLoadedResourceRepository;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.JsoupHttpLoader;
@@ -23,19 +24,22 @@ import java.util.concurrent.Executors;
 public class CrawlResourceCommand {
     private final static Logger log = LoggerFactory.getLogger(CrawlResourceCommand.class);
 
-    private Report execute(String location) {
+    private void execute(String location) {
         Thread currentThread = Thread.currentThread();
         currentThread.setName("main");
 
-        ResourceCrawler crawler =
-            CrawlerBuilder
-                .aMultithreadedCrawler()
-                .withBrokenLinksReport()
-                .build();
+        MultiThreadedResourceCrawler crawler = (MultiThreadedResourceCrawler)CrawlerBuilder
+                                                    .aMultithreadedCrawler()
+                                                    .withBrokenLinksReport()
+                                                    .build();
 
         Resource toBeScanned = new Resource(location);
         crawler.crawlResource(toBeScanned);
-        return crawler.getReport();
+        Report report = crawler.getReport();
+
+        if (crawler.isCompelte()) {
+            log.info("Crawling COMPLETE:  {}", report);
+        }
     }
 
     public static void main(String[] args) {
@@ -43,7 +47,6 @@ public class CrawlResourceCommand {
         BasicConfigurator.configure();
 
         CrawlResourceCommand cmd = new CrawlResourceCommand();
-        Report report = cmd.execute("http://www.simplesite.com");
-        System.out.println(report);
+        cmd.execute("http://www.simpldddesite.com");
     }
 }

@@ -4,6 +4,7 @@ package com.hcisf.charlotte.config;
 import com.hcisf.charlotte.crawler.LoadedResourceRepository;
 import com.hcisf.charlotte.crawler.ResourceCrawler;
 import com.hcisf.charlotte.crawler.multithreaded.ExecutorMultiThreadedResourceCrawler;
+import com.hcisf.charlotte.crawler.multithreaded.MultiThreadedResourceCrawler;
 import com.hcisf.charlotte.crawler.multithreaded.ThreadSafeLoadedResourceRepository;
 
 import com.hcisf.charlotte.loader.JsoupHttpLoader;
@@ -20,14 +21,21 @@ import java.util.concurrent.Executors;
 
 
 public class CrawlerBuilder {
-    ExecutorService scannerPool = Executors.newFixedThreadPool(5);
-    LoadedResourceRepository repo = new ThreadSafeLoadedResourceRepository();
-    Loader loader = new JsoupHttpLoader(5000);
-    List<ResourceStatsGather> gatherers = new ArrayList<ResourceStatsGather>(5);
+    ExecutorService scannerPool;
+    LoadedResourceRepository repo;
+    Loader loader;
+    List<ResourceStatsGather> gatherers;
+    boolean createMultiThreaded;
 
+
+    private CrawlerBuilder(boolean createMultiThreaded) {
+        this.createMultiThreaded = createMultiThreaded;
+        loader = new JsoupHttpLoader(5000);
+        gatherers = new ArrayList<ResourceStatsGather>(5);
+    }
 
     public static CrawlerBuilder aMultithreadedCrawler() {
-        return new CrawlerBuilder();
+        return new CrawlerBuilder(true);
     }
 
 
@@ -38,9 +46,11 @@ public class CrawlerBuilder {
 
     public ResourceCrawler build() {
         Reporter reporter = new Reporter(gatherers);
-        ResourceCrawler crawler = new ExecutorMultiThreadedResourceCrawler(
-            scannerPool, repo, loader, reporter
-        );
+        ResourceCrawler crawler;
+
+        scannerPool = Executors.newFixedThreadPool(5);
+        repo = new ThreadSafeLoadedResourceRepository();
+        crawler = new ExecutorMultiThreadedResourceCrawler(scannerPool, repo, loader, reporter);
 
         return crawler;
     }
