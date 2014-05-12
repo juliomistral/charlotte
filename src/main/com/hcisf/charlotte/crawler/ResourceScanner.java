@@ -3,8 +3,11 @@ package com.hcisf.charlotte.crawler;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 import com.hcisf.charlotte.report.Reporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceScanner {
+    private final static Logger log = LoggerFactory.getLogger(ResourceScanner.class);
     LoadedResourceRepository loadedResourceRepository;
     Loader loader;
     ResourceCrawler crawler;
@@ -23,6 +26,7 @@ public class ResourceScanner {
 
     public void scan(Resource resource) {
         if (loadedResourceRepository.wasResourceVisited(resource)) {
+            log.debug("!! Resource already visited, skipping...");
             return;
         }
         loadedResourceRepository.registerVisitedResource(resource);
