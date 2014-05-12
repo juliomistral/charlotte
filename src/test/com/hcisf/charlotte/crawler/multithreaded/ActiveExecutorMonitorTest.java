@@ -49,6 +49,27 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
     }
 
     @Test
+    public void shouldRegisterItselfAsAListenerToTheExecutorWhenAnActiveExecutorIsRegistered() {
+        // when an exeuctor is registered
+        monitor.registerActiveExecutor(executor);
+
+        // then the monitor is set to started
+        verify(executor, times(1)).addListener(monitor);
+    }
+
+    @Test
+    public void shouldDeregisterExecutorWhenTheExecutorNotifiesTheMonitorThatItsCompleted() {
+        // given an exeuctor is registered
+        monitor.registerActiveExecutor(executor);
+
+        // when the monitor is notified of the executor's completion
+        monitor.handleExecutorCompleted(executor);
+
+        // then the monitor is set to started
+        assert !monitor.isExecutorActive(executor);
+    }
+
+    @Test
     public void shouldFireOffAThreadToCheckOnTheSetOfActiveExecutorsWhenAnActiveExecutorIsRegistered() throws Exception {
         // when an exeuctor is registered
         monitor.registerActiveExecutor(executor);
@@ -61,27 +82,13 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
     }
 
     @Test
-    public void shouldDeregisterCompletedExecutorsWhenTheMonitoringThreadChecksForCompletedExecutors() {
-        // given an executor is registered
-        monitor.registerActiveExecutor(executor);
-
-        // and the executor completes
-        when(executor.isCompleted()).thenReturn(true);
-
-        // when the monitoring thread executes the completed exeutor check
-        monitor.run();
-
-        // then executor is removed from the set of active executors
-        assert !monitor.isExecutorActive(executor);
-    }
-
-    @Test
     public void shouldStopCheckingForActiveExecutorsAfterFindingNoneInSucessiveTries() {
         // given an executor is registered
         monitor.registerActiveExecutor(executor);
 
-        // and the executor completes
+        // and the executor notifies the monitor that it has completed
         when(executor.isCompleted()).thenReturn(true);
+        monitor.handleExecutorCompleted(executor);
 
         // when the monitoring thread executes the completed executor check
         monitor.run();
@@ -96,8 +103,9 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
         // given an executor is registered
         monitor.registerActiveExecutor(executor);
 
-        // and the executor completes
+        // and the executor notifies the monitor that it has completed
         when(executor.isCompleted()).thenReturn(true);
+        monitor.handleExecutorCompleted(executor);
 
         // when the monitoring thread executes the completed executor check
         monitor.run();
@@ -105,4 +113,6 @@ public class ActiveExecutorMonitorTest extends MockBasedTest {
         // then the monitor should shut down the crawler
         verify(crawler, times(1)).shutdown();
     }
+
+
 }

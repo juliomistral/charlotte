@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class ActiveExecutorMonitor implements Runnable {
+public class ActiveExecutorMonitor implements Runnable, ResourceCrawlerExecutorListener {
     public final static String MONITOR_THREAD_NAME = "ActiveExecutorMonitor";
     private final static Logger log = LoggerFactory.getLogger(ActiveExecutorMonitor.class);
 
@@ -45,6 +45,7 @@ public class ActiveExecutorMonitor implements Runnable {
     public void registerActiveExecutor(ResourceCrawlerExecutor executor) {
         synchronized (activeExecutors) {
             activeExecutors.add(executor);
+            executor.addListener(this);
         }
         if (!isStarted) {
             startMonitoringThread();
@@ -65,7 +66,6 @@ public class ActiveExecutorMonitor implements Runnable {
     public void run() {
         while (true) {
             synchronized (activeExecutors) {
-                pruneCompletedExecutors();
                 updateMissCount();
 
                 if (isMissCountAtThreshold()) {
@@ -81,15 +81,9 @@ public class ActiveExecutorMonitor implements Runnable {
         }
     }
 
-    private void pruneCompletedExecutors() {
-        Iterator<ResourceCrawlerExecutor> iterator = activeExecutors.iterator();
-        while (iterator.hasNext()) {
-            ResourceCrawlerExecutor exc = iterator.next();
-            if (exc.isCompleted()) {
-                iterator.remove();
-            }
-        }
-        log.info("# of active executors:  {}", activeExecutors.size());
+    @Override
+    public void handleExecutorCompleted(ResourceCrawlerExecutor executor) {
+        this.activeExecutors.remove(executor);
     }
 
     private void updateMissCount() {
@@ -98,7 +92,7 @@ public class ActiveExecutorMonitor implements Runnable {
         } else {
             noActiveExecutorMissesCount.set(0);
         }
-        log.info("Miss count: {}", noActiveExecutorMissesCount.get());
+        log.info("Active executor count:  {}, Miss count: {}", activeExecutors.size(), noActiveExecutorMissesCount.get());
     }
 
     private boolean isMissCountAtThreshold() {
