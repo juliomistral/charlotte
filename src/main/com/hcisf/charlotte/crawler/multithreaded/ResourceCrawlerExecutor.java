@@ -43,4 +43,8 @@ public class ResourceCrawlerExecutor implements Runnable {
     public void addListener(ResourceCrawlerExecutorListener listener) {
         this.listener = listener;
     }
+
+    public Resource getResource() {
+        return resource;
+    }
 }
