@@ -43,7 +43,7 @@ public class CrawlResourceCommand {
         BasicConfigurator.configure();
 
         CrawlResourceCommand cmd = new CrawlResourceCommand();
-        Report report = cmd.execute("http://www.simpleadsfasdasdsite.com");
+        Report report = cmd.execute("http://www.simplesite.com");
         System.out.println(report);
     }
 }
