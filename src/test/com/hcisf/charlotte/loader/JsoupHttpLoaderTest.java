@@ -67,13 +67,11 @@ public class JsoupHttpLoaderTest  {
 
     @Test
     public void shouldReturnAResourceSetToParsedIfTheLoadedContentIsParsedSuccessfully() throws Exception {
-        // When the loader loads the resource URL
-        Resource output;
-        output = loader.loadResource(RESOURCE_URL);
+        // When the loader populates the resource URL
+        loader.populateResource(resource);
 
         // Then the returned resource is set to parsed
-        assertNotNull(output);
-        assertEquals(ResourceStatus.PARSED, output.status);
+        assertEquals(ResourceStatus.PARSED, resource.status);
     }
 
     @Test
@@ -83,13 +81,11 @@ public class JsoupHttpLoaderTest  {
                     .withArguments(RESOURCE_URL)
                     .thenThrow(new MalformedURLException());
 
-        // When the loader loads the resource URL
-        Resource output;
-        output = loader.loadResource(RESOURCE_URL);
+        // When the loader populates the resource URL
+        loader.populateResource(resource);
 
         // Then the returned resource is set to invalid
-        assertNotNull(output);
-        assertEquals(ResourceStatus.INVALID, output.status);
+        assertEquals(ResourceStatus.INVALID, resource.status);
     }
 
     @Test
@@ -99,13 +95,11 @@ public class JsoupHttpLoaderTest  {
                     .withArguments(RESOURCE_URL)
                     .thenThrow(new IOException());
 
-        // When the loader loads the resource URL
-        Resource output;
-        output = loader.loadResource(RESOURCE_URL);
+        // When the loader populates the resource URL
+        loader.populateResource(resource);
 
         // Then the returned resource is set to unavailable
-        assertNotNull(output);
-        assertEquals(ResourceStatus.UNAVAILABLE, output.status);
+        assertEquals(ResourceStatus.UNAVAILABLE, resource.status);
     }
 
     @Test
@@ -119,14 +113,12 @@ public class JsoupHttpLoaderTest  {
         );
         elements.add(element);
 
-        // When the loader loads the resource URL
-        Resource output;
-        output = loader.loadResource(RESOURCE_URL);
+        // When the loader populates the resource URL
+        loader.populateResource(resource);
 
         // Then the returned resource has 1 child
-        assertNotNull(output.children);
-        assert output.children.size() == 1;
-        Resource child = output.children.get(0);
+        assert resource.children.size() == 1;
+        Resource child = resource.children.get(0);
 
         // Add the child is an empty resource with it's location set
         assertEquals(ResourceStatus.EMPTY, child.status);

@@ -4,6 +4,7 @@ package com.hcisf.charlotte.loader;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.domain.ResourceStatus;
 import com.hcisf.charlotte.domain.ResourceType;
+import com.hcisf.charlotte.loader.filters.Filter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,24 +16,26 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
 public class JsoupHttpLoader implements Loader {
     private static final Logger log = LoggerFactory.getLogger(JsoupHttpLoader.class);
     int timeout;
+    List<Filter> filters;
 
     public JsoupHttpLoader(int timeout) {
         this.timeout = timeout;
+        this.filters = new LinkedList<Filter>();
     }
 
     @Override
-    public Resource loadResource(String resourceLocation) {
-        Resource resource = new Resource(resourceLocation);
-        populateResource(resource);
-        return resource;
+    public void addFilters(List<Filter> filters) {
+        this.filters.addAll(filters);
     }
 
+    @Override
     public void populateResource(Resource resource) {
         log.info("Loading resource from it's location:  {}", resource.location);
         try {
