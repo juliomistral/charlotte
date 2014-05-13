@@ -61,10 +61,21 @@ public class JsoupHttpLoader implements Loader {
         List<Resource> linkResources = new ArrayList<Resource>(links.size());
         for (Element link : links) {
             String location = link.attr("abs:href");
-            linkResources.add(new Resource(location));
+            if (isLocationValid(location)) {
+                linkResources.add(new Resource(location));
+            }
         }
 
         return linkResources;
+    }
+
+    private boolean isLocationValid(String location) {
+        for (Filter filter : filters) {
+            if (!filter.include(location)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
