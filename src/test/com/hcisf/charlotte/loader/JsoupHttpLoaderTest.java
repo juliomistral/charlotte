@@ -1,17 +1,10 @@
 package com.hcisf.charlotte.loader;
 
 
-import com.hcisf.PowerMockWithSpecTestNameRunner;
-
+import com.hcisf.charlotte.MockBasedTest;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.domain.ResourceStatus;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-
 import com.hcisf.charlotte.loader.filters.Filter;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,21 +12,23 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import static org.mockito.Mockito.*;
+import static junit.framework.Assert.assertEquals;
+import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
-@RunWith(PowerMockWithSpecTestNameRunner.class)
 @PrepareForTest({Jsoup.class, JsoupHttpLoader.class})
-public class JsoupHttpLoaderTest  {
+public class JsoupHttpLoaderTest extends MockBasedTest {
     private static final int TIMEOUT = 1000;
     private static final String RESOURCE_URL = "http://google.com";
 
