@@ -24,6 +24,8 @@ public class CrawlResourceCommand {
             CrawlerBuilder
                 .aMultithreadedCrawler()
                 .withBrokenLinksReport()
+                .withNoMailToFilter()
+                .withLinksInDomainFilter(location)
                 .build();
 
         setupForcedShutdownHook();
