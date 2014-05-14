@@ -43,15 +43,17 @@ public class JsoupHttpLoaderTest  {
     @Mock Filter filter;
     @Mock Document document;
     Elements elements;
+    List<Filter> filters;
 
     @Before
     public void setup() throws Exception {
         PowerMockito.mockStatic(Jsoup.class);
 
-
         resource = new Resource(RESOURCE_URL);
         elements = new Elements();
         doReturn(elements).when(document).select(anyString());
+
+        filters = new ArrayList<Filter>(1);
 
         when(
             Jsoup.parse(any(URL.class), anyInt())
@@ -112,8 +114,7 @@ public class JsoupHttpLoaderTest  {
     @Test
     public void shouldCreateAChildResourceForEveryValidLinkFoundInTheParsedDocument() throws Exception {
         // Given the parsed document contains a link in it
-        Element element = createMockElementForLocation(RESOURCE_URL);
-        elements.add(element);
+        addMockElementToDocumentElements(RESOURCE_URL);
 
         // When the loader populates the resource URL
         loader.populateResource(resource);
@@ -129,17 +130,16 @@ public class JsoupHttpLoaderTest  {
 
     @Test
     public void shouldNotCreateAChildResourceForLinksRemovedByTheRegisteredFilters() {
-        // given the parsed document contains a link in it
-        Element excludedElement = createMockElementForLocation(RESOURCE_URL);
-        Element includedElement = createMockElementForLocation("other url");
-        elements.add(excludedElement);
-        elements.add(includedElement);
+        // given the parsed document contains 2 links in it
+        addMockElementToDocumentElements("excluded");
+        addMockElementToDocumentElements("included");
 
-        // and the loader is configured with a filter that would exclude the child link
-        List<Filter> filters = new ArrayList<Filter>(1);
-        when(filter.include(RESOURCE_URL)).thenReturn(false);
-        when(filter.include("other url")).thenReturn(true);
+        // and the filter will exclude one link and include link
+        when(filter.include("excluded")).thenReturn(false);
+        when(filter.include("included")).thenReturn(true);
         filters.add(filter);
+
+        // and the loader is configured to use the filter
         loader.addFilters(filters);
 
         // when the loader populates the resource
@@ -148,19 +148,19 @@ public class JsoupHttpLoaderTest  {
         // then the resource doesn't contain a child resource for the excluded link
         assert resource.children.size() == 1;
         Resource child = resource.children.get(0);
-        assert !child.location.equals(RESOURCE_URL);
+        assert !child.location.equals("excluded");
 
         // but the resource contains a child resource for the included link
-        assert child.location.equals("other url");
+        assert child.location.equals("included");
     }
 
-    private Element createMockElementForLocation(String resourceUrl) {
+    private void addMockElementToDocumentElements(String resourceUrl) {
         Element link = mock(Element.class);
         when(
-            link.attr(anyString())
+                link.attr(anyString())
         ).thenReturn(
-            resourceUrl
+                resourceUrl
         );
-        return link;
+        elements.add(link);
     }
 }
