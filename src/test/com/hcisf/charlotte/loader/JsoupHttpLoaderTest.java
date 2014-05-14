@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 
 @PrepareForTest({Jsoup.class, JsoupHttpLoader.class})
@@ -152,9 +151,9 @@ public class JsoupHttpLoaderTest extends MockBasedTest {
     private void addMockElementToDocumentElements(String resourceUrl) {
         Element link = mock(Element.class);
         when(
-                link.attr(anyString())
+            link.attr(anyString())
         ).thenReturn(
-                resourceUrl
+            resourceUrl
         );
         elements.add(link);
     }
