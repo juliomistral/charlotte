@@ -1,36 +1,33 @@
 package com.hcisf.charlotte.crawler;
 
-import com.hcisf.PowerMockWithSpecTestNameRunner;
+import com.hcisf.charlotte.MockBasedTest;
 import com.hcisf.charlotte.domain.Resource;
 import com.hcisf.charlotte.loader.Loader;
 
+import com.hcisf.charlotte.report.Reporter;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
 
 
-@RunWith(PowerMockWithSpecTestNameRunner.class)
-public class ResourceScannerTest {
+public class ResourceScannerTest extends MockBasedTest {
     public static final String RESOURCE_URL = "http://some.url";
 
     ResourceScanner scanner;
-    LoadedResourceRepository repository;
-    Loader loader;
-    ResourceCrawler crawler;
     Resource resource;
+
+    @Mock LoadedResourceRepository repository;
+    @Mock Loader loader;
+    @Mock ResourceCrawler crawler;
+    @Mock Reporter reporter;
 
 
     @Before
     public void setup() {
         resource = new Resource(RESOURCE_URL);
-
-        repository = mock(LoadedResourceRepository.class);
-        loader = mock(Loader.class);
-        crawler = mock(ResourceCrawler.class);
-
-        scanner = new ResourceScanner(repository, loader, crawler);
+        scanner = new ResourceScanner(repository, loader, crawler, reporter);
     }
 
     @Test
@@ -75,7 +72,16 @@ public class ResourceScannerTest {
         scanner.scan(resource);
 
         // then: "the children are registered with the resource crawler"
-        verify(crawler, times(1)).registerForScanning(child1);
-        verify(crawler, times(1)).registerForScanning(child2);
+        verify(crawler, times(1)).crawlResource(child1);
+        verify(crawler, times(1)).crawlResource(child2);
+    }
+
+    @Test
+    public void shouldUseTheReporterToGatherStatsOnTheScannedResource() {
+        // when: "the scanner scans a resource"
+        scanner.scan(resource);
+
+        // then: "the reporter gathers statistics on the resource after it's loaded
+        verify(reporter, times(1)).gatherStatistics(resource);
     }
 }
