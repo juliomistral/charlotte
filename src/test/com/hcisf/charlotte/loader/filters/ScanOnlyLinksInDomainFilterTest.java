@@ -54,4 +54,14 @@ public class ScanOnlyLinksInDomainFilterTest extends MockBasedTest {
         boolean output = filter.include("otherdomain.com");
         assertThat(output).isFalse();
     }
+
+    @Test
+    public void shouldBeConfigurableWithAFullHTTPUrl() {
+        // given a filter configured for a full HTML URL
+        filter = new ScanOnlyLinksInDomainFilter("http://www.domain.com");
+
+        // then the filter should include a link in that domain
+        boolean output = filter.include("domain.com");
+        assertThat(output).isTrue();
+    }
 }
