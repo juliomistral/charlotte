@@ -5,6 +5,7 @@ import com.hcisf.charlotte.config.CrawlerBuilder;
 import com.hcisf.charlotte.crawler.multithreaded.MultiThreadedResourceCrawler;
 import com.hcisf.charlotte.domain.Resource;
 
+import com.hcisf.charlotte.report.Report;
 import org.apache.log4j.BasicConfigurator;
 
 import org.slf4j.Logger;
@@ -24,14 +25,15 @@ public class CrawlResourceCommand {
             CrawlerBuilder
                 .aMultithreadedCrawler()
                 .withBrokenLinksReport()
+                .withNoMailToFilter()
+                .withLinksInDomainFilter(location)
                 .build();
 
         setupForcedShutdownHook();
         executeResourceCrawl(location);
 
-        if (crawler.isCompelte()) {
-            log.info("Crawling COMPLETE:  {}", crawler.getReport());
-        }
+        Report report = crawler.getReport();
+        log.info("Crawling COMPLETE:  {}", report);
     }
 
     private void setupForcedShutdownHook() {
